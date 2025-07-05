@@ -71,7 +71,6 @@ main {
 .story {
   font-size: 1.2rem;
   margin-bottom: 30px;
-  color: #2E9DF7; /* Blue for story text */
   font-weight: bold;
   background: #fff;
   border-left: 6px solid #FFC907;
@@ -125,17 +124,29 @@ main {
   height: 20px;
   margin: 40px auto 0 auto;
   border: 2px solid #2E9DF7; /* Blue border */
-  background: repeating-linear-gradient(
-    135deg,
-    #8BD1CB, /* Light blue */
-    #8BD1CB 10px,
-    #2E9DF7 10px,
-    #2E9DF7 20px,
-    #FFC907 20px,
-    #FFC907 30px
-  );
+  background: none; /* Hide background by default */
   border-radius: 4px;
   box-shadow: 0 1px 6px rgba(46,157,247,0.10);
+  position: relative;
+  overflow: hidden;
+}
+
+/* The fill bar inside the progress bar */
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: #2E9DF7; /* Match border color */
+  border-radius: 4px;
+  transition: width 0.6s;
+  z-index: 1;
+}
+
+/* Show 5% fill after first fade out */
+.progress-fill.show {
+  width: 5%;
 }
 
 .game-start-note {
@@ -145,4 +156,20 @@ main {
   font-style: italic;
   font-weight: bold;
   letter-spacing: 1px;
+}
+
+.story, .choice, .progress {
+  transition: opacity 0.6s;
+  opacity: 1;
+}
+
+/* Fade out: make element transparent */
+.fade-out {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* Fade in: make element visible */
+.fade-in {
+  opacity: 1 !important;
 }

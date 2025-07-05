@@ -1,194 +1,98 @@
 // Simple interactive story game for beginners
 
-// Story data structure
-const story = [
-    {
-        id: 0,
-        text: `You arrive in a village that needs clean water. What will you do first?`,
-        choices: [
-            { text: "Talk to the village chief", next: 1 },
-            { text: "Look for water sources", next: 2 }
-        ]
-    },
-    {
-        id: 1,
-        text: `The chief welcomes you. He gives you a Business Card. What next?`,
-        item: "Business Card",
-        choices: [
-            { text: "Visit the local school", next: 3 },
-            { text: "Search for engineers", next: 4 }
-        ]
-    },
-    {
-        id: 2,
-        text: `You find a muddy river. It's not safe to drink. What now?`,
-        choices: [
-            { text: "Return to the village", next: 0 },
-            { text: "Test the water", next: 5 }
-        ]
-    },
-    {
-        id: 3,
-        text: `At the school, students are excited. A teacher asks if you have a Business Card.`,
-        choices: [
-            { text: "Show Business Card", next: 6, requiredItem: "Business Card" },
-            { text: "Say you forgot it", next: 7 }
-        ]
-    },
-    {
-        id: 4,
-        text: `You meet an engineer who can help. He needs proof you are from the charity.`,
-        choices: [
-            { text: "Show Business Card", next: 8, requiredItem: "Business Card" },
-            { text: "Go back to the chief", next: 1 }
-        ]
-    },
-    {
-        id: 5,
-        text: `You test the water. It's dirty. You need help from the village.`,
-        choices: [
-            { text: "Return to the village", next: 0 }
-        ]
-    },
-    {
-        id: 6,
-        text: `The teacher smiles and offers to help spread the word. Progress!`,
-        choices: [
-            { text: "Continue", next: 9 }
-        ]
-    },
-    {
-        id: 7,
-        text: `The teacher looks unsure. Maybe you should get the Business Card.`,
-        choices: [
-            { text: "Return to the chief", next: 1 }
-        ]
-    },
-    {
-        id: 8,
-        text: `The engineer agrees to help build a well. The village celebrates!`,
-        choices: [
-            { text: "Finish", next: 10 }
-        ]
-    },
-    {
-        id: 9,
-        text: `With the school's help, the project is a success!`,
-        choices: [
-            { text: "Finish", next: 10 }
-        ]
-    },
-    {
-        id: 10,
-        text: `Congratulations! You helped bring clean water to the village!`,
-        choices: [
-            { text: "Play Again", next: 0 }
-        ]
-    }
-];
+// Select the story, button, and progress bar elements
+const storyDiv = document.querySelector('.story');
+const choiceBtn = document.querySelector('.choice');
+const progressBar = document.querySelector('.progress');
 
-// Track game state
-let currentNode = 0;
-let inventory = [];
-let visitedNodes = [];
+// Select the progress bar fill element
+const progressFill = document.querySelector('.progress-fill');
 
-// Get DOM elements
-const storyContainer = document.getElementById('story-container');
-const choicesContainer = document.getElementById('choices-container');
-const progressBarFill = document.getElementById('progress-bar-fill');
-const menuButton = document.getElementById('menu-button');
-const menu = document.getElementById('menu');
-const resetButton = document.getElementById('reset-button');
+// Helper: ensure elements start with fade-in
+[storyDiv, choiceBtn, progressBar].forEach(el => {
+    el.classList.add('fade-in');
+    el.classList.remove('fade-out');
+});
 
-// Show the current story node
-function showNode(nodeId) {
-    // Find the node in the story array
-    const node = story.find(n => n.id === nodeId);
+// Hide the fill at startup
+progressFill.classList.remove('show');
 
-    // Add node to visited if not already there
-    if (!visitedNodes.includes(nodeId)) {
-        visitedNodes.push(nodeId);
-    }
+// Function to fade out elements
+function fadeOutElements(elements, callback) {
+    let faded = 0;
+    elements.forEach(el => {
+        // Remove any previous transitionend handlers to avoid stacking
+        el.ontransitionend = null;
+        el.classList.add('fade-out');
+        el.classList.remove('fade-in');
+        // Listen for transition end (only once)
+        el.addEventListener('transitionend', function handler(e) {
+            // Only trigger on opacity transition
+            if (e.propertyName === 'opacity') {
+                faded++;
+                el.removeEventListener('transitionend', handler);
+                if (faded === elements.length && typeof callback === 'function') {
+                    callback();
+                }
+            }
+        });
+    });
+}
 
-    // If the node gives an item, add it to inventory
-    if (node.item && !inventory.includes(node.item)) {
-        inventory.push(node.item);
-    }
+// Function to fade in elements
+function fadeInElements(elements) {
+    elements.forEach(el => {
+        el.classList.remove('fade-out');
+        el.classList.add('fade-in');
+    });
+}
 
-    // Show story text
-    storyContainer.textContent = node.text;
+// Create an inventory array to store items the player collects
+let inventory = []; // This will hold strings like "water satchel"
 
-    // Clear previous choices
-    choicesContainer.innerHTML = '';
+// Add click event to the first choice button
+choiceBtn.addEventListener('click', function handleFirstClick() {
+    // Fade out story, button, and progress bar
+    fadeOutElements([storyDiv, choiceBtn, progressBar], () => {
+        // After fade out, change the content
+        storyDiv.textContent = "Opening the door, I squint my eyes- a sheet of humidity envelops my body as my eyes slowly adjust to the sun.";
+        choiceBtn.textContent = 'I walk outside.';
 
-    // Show choices as buttons
-    node.choices.forEach(choice => {
-        // If the choice requires an item, check inventory
-        let canChoose = true;
-        if (choice.requiredItem && !inventory.includes(choice.requiredItem)) {
-            canChoose = false;
-        }
+        // Show 5% of the progress bar fill
+        progressFill.classList.add('show');
 
-        // Create a button for each choice
-        const btn = document.createElement('button');
-        btn.textContent = choice.text;
+        // Create the "Wait..." button for the second phase
+        let waitBtn = document.createElement('button');
+        waitBtn.className = 'choice';
+        waitBtn.textContent = 'Wait...';
+        // Insert after the main choice button
+        choiceBtn.parentNode.insertBefore(waitBtn, progressBar);
 
-        // Disable button if requirements not met
-        btn.disabled = !canChoose;
+        // Fade in the new content and the new button
+        fadeInElements([storyDiv, choiceBtn, waitBtn, progressBar]);
 
-        // Add a helpful tooltip if disabled
-        if (!canChoose) {
-            btn.title = `You need: ${choice.requiredItem}`;
-        }
+        // Add click event for the "Wait..." button
+        waitBtn.addEventListener('click', function() {
+            fadeOutElements([storyDiv, choiceBtn, waitBtn, progressBar], () => {
+                // Update the story text
+                storyDiv.textContent = "I go back inside, a sense of forgetfulness I dispel going into my room. I grab my water satchel, knowing I need it to stay hydrated in this heat.";
 
-        // When clicked, go to the next node
-        btn.addEventListener('click', function() {
-            goToNode(choice.next);
+                // Add "water satchel" to the player's inventory if not already present
+                if (!inventory.includes("water satchel")) {
+                    inventory.push("water satchel");
+                }
+
+                // Hide the main choice button after waiting
+                choiceBtn.style.display = 'none';
+                waitBtn.textContent = 'Step outside again.';
+                fadeInElements([storyDiv, waitBtn, progressBar]);
+            });
         });
 
-        choicesContainer.appendChild(btn);
+        // Remove this event listener so the first button only works once
+        choiceBtn.removeEventListener('click', handleFirstClick);
     });
-
-    // Update progress bar
-    updateProgressBar();
-}
-
-// Go to a specific node
-function goToNode(nodeId) {
-    currentNode = nodeId;
-    showNode(currentNode);
-}
-
-// Update the progress bar based on how many unique nodes visited
-function updateProgressBar() {
-    // Calculate progress as a percentage
-    const percent = Math.floor((visitedNodes.length / story.length) * 100);
-    progressBarFill.style.width = `${percent}%`;
-}
-
-// Reset the game to the beginning
-function resetGame() {
-    currentNode = 0;
-    inventory = [];
-    visitedNodes = [];
-    showNode(currentNode);
-}
-
-// Menu button toggles menu visibility
-menuButton.addEventListener('click', function() {
-    // Show or hide the menu
-    if (menu.style.display === 'none') {
-        menu.style.display = 'block';
-    } else {
-        menu.style.display = 'none';
-    }
 });
 
-// Reset button resets the game
-resetButton.addEventListener('click', function() {
-    resetGame();
-    menu.style.display = 'none'; // Hide menu after reset
-});
-
-// Start the game
-showNode(currentNode);
+// Make sure elements are visible on load
+fadeInElements([storyDiv, choiceBtn, progressBar]);
