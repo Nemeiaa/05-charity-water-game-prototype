@@ -173,3 +173,66 @@ main {
 .fade-in {
   opacity: 1 !important;
 }
+
+/* Make the timer display large and centered */
+.timer-display {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #F5402C;
+  margin: 24px 0 24px 0;
+  text-align: center;
+  display: block;
+}
+
+/* Add extra margin to visually center timer between story and choices */
+.timer-centered {
+  margin-top: 48px;
+  margin-bottom: 48px;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 60px;
+  left: 20px;
+  background: #fff;
+  border: 2px solid #2E9DF7;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(46,157,247,0.15);
+  z-index: 100;
+  min-width: 120px;
+  padding: 8px 0;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-item {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 12px 20px;
+  font-size: 1rem;
+  color: #2E9DF7;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: #e6f3f8;
+  color: #159A48;
+}
+
+/* Responsive: move menu to right on small screens */
+@media (max-width: 600px) {
+  .dropdown-menu {
+    left: auto;
+    right: 20px;
+    top: 60px;
+    min-width: 100px;
+  }
+}

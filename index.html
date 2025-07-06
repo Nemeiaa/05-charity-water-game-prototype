@@ -10,20 +10,19 @@
     <!-- Header with menu and logo -->
     <header>
         <div class="menu">☰ Menu</div>
+        <!-- Dropdown menu (hidden by default) -->
+        <div class="dropdown-menu">
+            <button class="dropdown-item reset-btn">Reset</button>
+        </div>
         <div class="logo">E Pluribus Unum</div>
     </header>
 
     <main>
-        <!-- Story text -->
-        <div class="story">
-            "Erzi... are you really sure?"
-        </div>
+        <!-- Story text (empty, will be filled by JS) -->
+        <div class="story"></div>
 
-        <!-- Single choice button with (GAME START) inside -->
-        <button class="choice">
-            You know the answer, Ma.
-            <span class="game-start-note">(GAME START)</span>
-        </button>
+        <!-- Single choice button (label will be set by JS) -->
+        <button class="choice" style="display: none;"></button>
 
         <!-- Progress bar -->
         <div class="progress">
