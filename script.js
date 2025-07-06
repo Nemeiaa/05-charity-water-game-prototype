@@ -104,7 +104,7 @@ const scenes = [
         timerAction: () => nextScene(6) // If timer runs out, run away
     },
     {
-        text: `You let him take it. Maybe he needs it more than you.<br><br>`,
+        text: `You let him take it. Maybe he needs it more than you.`,
         choices: [
             {
                 label: "Continue",
@@ -113,7 +113,7 @@ const scenes = [
         ]
     },
     {
-        text: `[Unwritten Scene - Will be added later]<br><br>`,
+        text: `[Unwritten Scene - Will be added later]`,
         choices: [
             {
                 label: "Continue",
